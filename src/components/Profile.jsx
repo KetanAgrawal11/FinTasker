@@ -23,7 +23,7 @@ export default function Profile() {
 
     const handleUpdate = () => {
         const updatedUser = { ...user, userId: user._id }; // Ensure user ID is included
-        fetch(`${backendUrl}/editProfile`, {
+        fetch(`${backendUrl}/api/auth/editProfile`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

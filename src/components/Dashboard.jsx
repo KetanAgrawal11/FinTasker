@@ -23,7 +23,7 @@ export default function Dashboard() {
             const user = JSON.parse(localStorage.getItem("user"));
             const userId = user?.userId;
 
-            const response = await fetch(`${backendUrl}/transactions`, {
+            const response = await fetch(`${backendUrl}/api/transactions/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export default function Dashboard() {
 
         if (!userId) return;
 
-        const response = await fetch(`${backendUrl}/balance-history`, {
+        const response = await fetch(`${backendUrl}/api/transactions/balance-history`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
         if (!userId) return;
 
-        const response = await fetch(`${backendUrl}/transactions`, {
+        const response = await fetch(`${backendUrl}/api/transactions/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function Dashboard() {
 
     const deleteTransaction = async (transactionId) => {
         try {
-            const response = await fetch(`${backendUrl}/transaction/${transactionId}`, {
+            const response = await fetch(`${backendUrl}/api/transactions/${transactionId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function Dashboard() {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`${backendUrl}/resetTransactions`, {
+            const response = await fetch(`${backendUrl}/api/transactions/reset`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -182,7 +182,7 @@ export default function Dashboard() {
             const userId = user?.userId;
             const dataWithUser = { ...data, userId };
 
-            const response = await fetch(`${backendUrl}/newTransaction`, {
+            const response = await fetch(`${backendUrl}/api/transactions/new`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -220,51 +220,53 @@ export default function Dashboard() {
         link.click();
     };
 
-        const handleCSVUpload = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+    const handleCSVUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: async (results) => {
-                    try {
-                        const formattedData = results.data.map((row) => ({
-                            description: row.description,
-                            type: row.type.toLowerCase(),
-                            category: row.category.toLowerCase(),
-                            date: row.date,
-                            amount: parseFloat(row.amount),
-                        }));
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: async (results) => {
+                try {
+                    const formattedData = results.data.map((row) => ({
+                        description: row.description,
+                        type: row.type.toLowerCase(),
+                        category: row.category.toLowerCase(),
+                        date: row.date,
+                        amount: parseFloat(row.amount),
+                    }));
 
-                        const response = await fetch(`${backendUrl}/import-tramsactions`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `${localStorage.getItem("token")}`,
-                            },
-                            body: JSON.stringify({ transactions: formattedData }),
-                        });
+                    console.log(formattedData)
 
-                        const data = await response.json();
-                        if (response.ok) {
-                            toast.success("CSV imported successfully!");
-                            // Optionally refresh transactions
-                            if (typeof fetchTransactions === "function") {
-                                fetchTransactions(); // Make sure this updates the table and charts
-                                fetchBalanceHistory();
-                                fetchTransactionSummary();
-                            }
-                        } else {
-                            toast.error(data.message || "Failed to import CSV");
+                    const response = await fetch(`${backendUrl}/api/transactions/import`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `${localStorage.getItem("token")}`,
+                        },
+                        body: JSON.stringify({ transactions: formattedData }),
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        toast.success("CSV imported successfully!");
+                        // Optionally refresh transactions
+                        if (typeof fetchTransactions === "function") {
+                            fetchTransactions(); // Make sure this updates the table and charts
+                            fetchBalanceHistory();
+                            fetchTransactionSummary();
                         }
-                    } catch (err) {
-                        console.error(err);
-                        toast.error("Error while processing CSV");
+                    } else {
+                        toast.error(data.message || "Failed to import CSV");
                     }
-                },
-            });
-        };
+                } catch (err) {
+                    console.error(err);
+                    toast.error("Error while processing CSV");
+                }
+            },
+        });
+    };
 
 
 

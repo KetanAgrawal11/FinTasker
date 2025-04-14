@@ -47,7 +47,7 @@ export default function RegistrationForm() {
 
         try {
             console.log(backendUrl)
-            const response = await fetch(`${backendUrl}/register`, {
+            const response = await fetch(`${backendUrl}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, dob, gender, phone, email, password }),
@@ -57,7 +57,7 @@ export default function RegistrationForm() {
             if (response.ok) {
                 toast.success("Registered successful!");
                 try {
-                    const response = await fetch(`${backendUrl}/login`, {
+                    const response = await fetch(`${backendUrl}/api/auth/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password }),

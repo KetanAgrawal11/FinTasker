@@ -9,7 +9,7 @@ const TaskManager = () => {
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch(`${backendUrl}/tasks`, {
+            const res = await fetch(`${backendUrl}/api/tasks`, {
                 headers: {
                     Authorization: localStorage.getItem("token"),
                 },
@@ -25,7 +25,7 @@ const TaskManager = () => {
     };
 
     const handleSave = async () => {
-        const url = editingTask ? `${backendUrl}/tasks/${editingTask._id}` : `${backendUrl}/tasks`;
+        const url = editingTask ? `${backendUrl}/api/tasks/${editingTask._id}` : `${backendUrl}/api/tasks`;
         const method = editingTask ? "PUT" : "POST";
 
         try {
@@ -51,7 +51,7 @@ const TaskManager = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this task?")) return;
         try {
-            await fetch(`${backendUrl}/tasks/${id}`, {
+            await fetch(`${backendUrl}/api/tasks/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: localStorage.getItem("token"),
