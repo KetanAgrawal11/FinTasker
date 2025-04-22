@@ -9,6 +9,17 @@ export default function LoginForm() {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
+        if (!email || !password) {
+            toast.error("Email and password are required.");
+            return;
+        }
+
+        // Email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
         try {
             const response = await fetch(`${backendUrl}/api/auth/login`, {
                 method: "POST",
