@@ -54,7 +54,6 @@ export default function Modal({ onClose, onSubmit, type }) {
                     <option value="">Select Category</option>
                     <option value="food">Food</option>
                     <option value="cloth">Cloth</option>
-                    <option value="rent">Rent</option>
                     <option value="others">Others</option>
                 </select>
 
